@@ -1,6 +1,5 @@
-package com.blog.javablog.article;
+package com.blog.javablog.comment;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,69 +9,57 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/articles")
-public class ArticleController {
+@RequestMapping("/comments")
+public class CommentController {
+  CommentService commentService;
 
-  ArticleRepository repository;
-
-  ArticleService articleService;
-
-  @Autowired
-  public ArticleController(ArticleRepository repository, ArticleService articleService) {
-    this.repository = repository;
-    this.articleService = articleService;
+  public CommentController(CommentService commentService) {
+    this.commentService = commentService;
   }
 
   @GetMapping
-  public ResponseEntity<List<Article>> getAllArticles() {
+  public ResponseEntity<List<Comment>> getAllComments() {
     try {
-      List<Article> articles = articleService.getAllArticles();
-      return ResponseEntity.ok(articles);
+      return ResponseEntity.ok(commentService.getAllComments());
     } catch (Exception ex) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Article> getArticle(@PathVariable long id) {
+  public ResponseEntity<Comment> getComment(@PathVariable long id) {
     try {
-      Article article = articleService.getArticle(id);
-
-      if (article == null) {
-        throw new IOException("No article was found");
-      } else {
-        return ResponseEntity.ok(article);
-      }
+      return ResponseEntity.ok(commentService.getComment(id));
     } catch (Exception ex) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
   }
 
   @PostMapping
-  public ResponseEntity createArticle(@RequestBody Article article, @RequestParam("blogUserId") long blogUserId) {
+  public ResponseEntity<Comment> createComment(@RequestBody CreateCommentRequest createCommentRequest) {
     try {
-      articleService.createArticle(article, blogUserId);
+      commentService.createComment(
+        new Comment(createCommentRequest.getText()),
+        createCommentRequest.getArticleId(),
+        createCommentRequest.getBlogUserId()
+      );
       return ResponseEntity.ok().build();
-    } catch (NoSuchElementException ex) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
     } catch (Exception ex) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Object> updateArticle(@RequestBody Article article, @PathVariable long id) {
+  public ResponseEntity<Object> updateComment(@RequestBody Comment comment, @PathVariable long id) {
     try {
-      articleService.updateArticle(id, article);
+      commentService.updateComment(id, comment);
       return ResponseEntity.ok().build();
     } catch (NoSuchElementException ex) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
@@ -82,9 +69,9 @@ public class ArticleController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Object> deleteArticle(@PathVariable long id) {
+  public ResponseEntity<Object> deleteComment(@PathVariable long id) {
     try {
-      articleService.deleteArticle(id);
+      commentService.deleteComment(id);
       return ResponseEntity.ok().build();
     } catch (NoSuchElementException ex) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
