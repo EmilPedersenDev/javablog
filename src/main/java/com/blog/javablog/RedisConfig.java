@@ -40,6 +40,7 @@ public class RedisConfig {
     return RedisCacheManager.builder(redisConnectionFactory())
       .cacheDefaults(cacheConfig)
       .withCacheConfiguration("articles", myDefaultCacheConfig(Duration.ofMinutes(5)))
+      .withCacheConfiguration("articlesTotalAmount", myDefaultCacheConfig(Duration.ofMinutes(5)))
       .withCacheConfiguration("comments", myDefaultCacheConfig(Duration.ofMinutes(5)))
       .build();
   }
