@@ -29,7 +29,7 @@ public class ImageServiceImpl implements ImageService {
     image.setType(file.getContentType());
     image.setData(ImageUtil.compressImage(file.getBytes()));
     repository.save(image);
-    return "Image uploaded successfully: " + file.getOriginalFilename();
+    return file.getOriginalFilename();
   }
 
   @Override

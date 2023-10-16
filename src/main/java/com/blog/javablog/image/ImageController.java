@@ -2,6 +2,7 @@ package com.blog.javablog.image;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/images")
 public class ImageController {
 
   ImageRepository repository;
@@ -45,6 +47,7 @@ public class ImageController {
       return ResponseEntity
         .status(HttpStatus.OK)
         .contentType(MediaType.valueOf(imageType))
+        .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
         .body(imageData);
     } catch (IOException ex) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
