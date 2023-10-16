@@ -41,6 +41,8 @@ public class Article {
   @Temporal(TemporalType.TIMESTAMP)
   private Date updated;
 
+  private String thumbnail;
+
   // Relationships
   @ManyToOne
   @JoinColumn(name = "blogUser_id", nullable = false)
@@ -57,7 +59,7 @@ public class Article {
   public Article() {
   }
 
-  public Article(long id, String title, String text, Date created, Date updated, BlogUser blogUser, List<Comment> comments) {
+  public Article(long id, String title, String text, Date created, Date updated, String thumbnail, BlogUser blogUser, List<Comment> comments) {
     this.id = id;
     this.title = title;
     this.text = text;
@@ -65,6 +67,7 @@ public class Article {
     this.comments = comments;
     this.created = created;
     this.updated = updated;
+    this.thumbnail = thumbnail;
   }
 
   public long getId() {
@@ -121,5 +124,13 @@ public class Article {
 
   public void setUpdated(Date updated) {
     this.updated = updated;
+  }
+
+  public String getThumbnail() {
+    return thumbnail;
+  }
+
+  public void setThumbnail(String thumbnail) {
+    this.thumbnail = thumbnail;
   }
 }
